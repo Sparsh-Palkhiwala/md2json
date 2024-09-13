@@ -35,6 +35,7 @@ def parse_markdown_to_json(markdown_content):
             current_module = {
                 "title": element.get_text(strip=True),
                 "color": "#8ED6ED",
+                "categories": [],
                 "icon": {
                     "name": "Module Icon",
                     "url": "some_icon_url",  # Update with actual icon URL
