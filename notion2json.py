@@ -39,8 +39,7 @@ def parse_markdown_to_json(markdown_content):
                 "icon": {
                     "name": "Module Icon",
                     "url": "some_icon_url",  # Update with actual icon URL
-                    "alt": "Module Icon Alt",
-                    "category": "Module Category"  # Update with module category     
+                    "alt": "Module Icon Alt",    
                 },
                 "lessons": []
             }
@@ -117,6 +116,40 @@ def parse_markdown_to_json(markdown_content):
                         'type': componentenum.HABIT.value,
                         'content': habit_content
                     })
+
+        elif element.name == 'p' and element.get_text(strip=True).startswith('::multiple_choice::'):    # Parser for multiple choice
+            if current_page is not None:
+                multiple_choice_info = element.find_next('div')
+                if multiple_choice_info:
+                    multiple_choice_lines = multiple_choice_info.get_text(strip=True).split('\n')
+                    multiple_choice_content = {}
+                    choices = []
+                    for line in multiple_choice_lines:
+                        if ':' in line:
+                            key, value = line.split(':', 1)
+                            key = key.strip().lower()
+                            value = value.strip().lower()
+                            if key == 'label':
+                                multiple_choice_content['label'] = value
+                            elif key == 'variable':
+                                multiple_choice_content['variable'] = value
+                            elif key == 'other':
+                                multiple_choice_content['other'] = value == 'true'
+                            elif key == 'multiselect':
+                                multiple_choice_content['multiSelect'] = value == 'true'
+                        elif line.startswith('-'):
+                            choice_text = line[1:].strip()
+                            choices.append(choice_text)
+
+                    for idx, choice in enumerate(choices):
+                        multiple_choice_content[f'choice_{idx+1}'] = choice
+
+                    current_page["components"].append({
+                        'type': componentenum.MULTIPLE_CHOICE.value,
+                        'content': multiple_choice_content
+                    })
+
+
         elif element.name == 'p':
             if current_page is not None:
                 current_page["components"].append({
