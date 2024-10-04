@@ -5,13 +5,13 @@ from enum import Enum
 import streamlit as st
 
 class componentenum(Enum):
-    VIDEO = "VIDEO"
-    TEXT = "TEXT"
-    INPUT = "INPUT"
-    HABIT = "HABIT"
-    CHECKBOX = "CHECKBOX"
-    MULTIPLE_CHOICE = "MULTIPLE_CHOICE"
-    CALENDAR = "CALENDAR"
+    VIDEO = "Video"
+    TEXT = "Text"
+    INPUT = "Input"
+    HABIT = "Habit"
+    CHECKBOX = "Checkbox"
+    MULTIPLE_CHOICE = "Multiple Choice"
+    CALENDAR = "Calender"
 
 def parse_markdown_to_json(markdown_content):
     html_content = markdown.markdown(markdown_content)
@@ -36,11 +36,7 @@ def parse_markdown_to_json(markdown_content):
                 "title": element.get_text(strip=True),
                 "color": "#8ED6ED",
                 "categories": [],
-                "icon": {
-                    "name": "Module Icon",
-                    "url": "some_icon_url",  # Update with actual icon URL
-                    "alt": "Module Icon Alt",    
-                },
+                "icon": "67007005bc823311fadacd2e",
                 "lessons": []
             }
         elif element.name == 'h2':
@@ -52,11 +48,7 @@ def parse_markdown_to_json(markdown_content):
                 current_lesson = None
             current_lesson = {
                 "title": element.get_text(strip=True),
-                "icon": {
-                    "name": "Lesson Icon",
-                    "url": "some_icon_url",  # Update with actual icon URL
-                    "alt": "Lesson Icon Alt"
-                },
+                "icon": "67007005bc823311fadacd2e",
                 "pages": []
             }
         elif element.name == 'h3':
@@ -83,7 +75,7 @@ def parse_markdown_to_json(markdown_content):
                         'type': componentenum.INPUT.value,
                         'content': activity_content
                     })
-        elif element.name == 'p' and element.get_text(strip=True).startswith('::video::'):
+        elif element.name == 'p' and element.get_text(strip=True).startswith('::video::'):      # Parser for video
             if current_page is not None:
                 video_info = element.find_next('div')
                 if video_info:
@@ -95,12 +87,12 @@ def parse_markdown_to_json(markdown_content):
                             value = value.strip()
                             if key in ["title", "url", "transcript"]:
                                 video_content[key] = video_content.get(key, '') + value + '\n' if key == "transcript" else value
-                    video_content["transcript"] = video_content["transcript"].strip()  # Remove extra newlines
+                    video_content["transcript"] = video_content["transcript"].strip() 
                     current_page["components"].append({
                         'type': componentenum.VIDEO.value,
                         'content': video_content
                     })
-        elif element.name == 'p' and element.get_text(strip=True).startswith('::habit::'):
+        elif element.name == 'p' and element.get_text(strip=True).startswith('::habit::'):      # Parser for habit
             if current_page is not None:
                 habit_info = element.find_next('div')
                 if habit_info:
