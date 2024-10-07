@@ -12,39 +12,22 @@ class componentenum(Enum):
     CHECKBOX = "Checkbox"
     MULTIPLE_CHOICE = "Multiple Choice"
     CALENDAR = "Calender"
-
+    
 def parse_markdown_to_json(markdown_content):
     html_content = markdown.markdown(markdown_content)
     soup = BeautifulSoup(html_content, 'html.parser')
 
-    modules = []
-    current_module = None
+    lessons = []
     current_lesson = None
     current_page = None
 
-    for element in soup.find_all(['h1', 'h2', 'h3', 'p', 'ol', 'li', 'a', 'iframe', 'div']):
-        if element.name == 'h1':
+    for element in soup.find_all(['h2', 'h3', 'p', 'ol', 'li', 'a', 'iframe', 'div']):
+        if element.name == 'h2':
             if current_page and current_page['components']:
                 current_lesson["pages"].append(current_page)
                 current_page = None
             if current_lesson:
-                current_module["lessons"].append(current_lesson)
-                current_lesson = None
-            if current_module:
-                modules.append(current_module)
-            current_module = {
-                "title": element.get_text(strip=True),
-                "color": "#8ED6ED",
-                "categories": [],
-                "icon": "67007005bc823311fadacd2e",
-                "lessons": []
-            }
-        elif element.name == 'h2':
-            if current_page and current_page['components']:
-                current_lesson["pages"].append(current_page)
-                current_page = None
-            if current_lesson:
-                current_module["lessons"].append(current_lesson)
+                lessons.append(current_lesson)
                 current_lesson = None
             current_lesson = {
                 "title": element.get_text(strip=True),
@@ -163,11 +146,9 @@ def parse_markdown_to_json(markdown_content):
     if current_page and current_page['components']:
         current_lesson["pages"].append(current_page)
     if current_lesson:
-        current_module["lessons"].append(current_lesson)
-    if current_module:
-        modules.append(current_module)
+        lessons.append(current_lesson)
 
-    return modules
+    return lessons
 
 import streamlit as st
 import json
